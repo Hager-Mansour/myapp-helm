@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Values.database.name }}-network
+  namespace: database-namespace
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.database.name }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+      - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: backend-namespace
+        podSelector:
+            matchLabels:
+              app: backend
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: backend
+      ports:
+        - protocol: TCP
+          port: {{ .Values.database.service.port }}
+

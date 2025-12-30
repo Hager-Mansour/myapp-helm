@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ .Values.database.name }}-quota
+  namespace: database-namespace
+spec:
+  hard:
+    pods: {{ .Values.database.resourceQuota.pods }}
+    requests.cpu: {{ .Values.database.resourceQuota.requestsCpu }}
+    requests.memory: {{ .Values.database.resourceQuota.requestsMemory }}
+    limits.cpu: {{ .Values.database.resourceQuota.limitsCpu }}
+    limits.memory: {{ .Values.database.resourceQuota.limitsMemory }}
+

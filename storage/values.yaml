@@ -1,0 +1,30 @@
+database:
+  name: mydb
+  image:
+    repository: mysql   
+    tag: "8.0"
+    pullPolicy: IfNotPresent
+  replicas: 1
+  service:
+    port: 3306      
+  credentials:
+    username: appuser
+    password: supersecret
+    dbname: appdb
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 10Gi
+  resourceQuota:
+    pods: "2"
+    requestsCpu: "1"
+    requestsMemory: "2Gi"
+    limitsCpu: "2"
+    limitsMemory: "4Gi"

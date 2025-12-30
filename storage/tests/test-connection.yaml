@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Values.database.name }}-test-connection
+  namespace: database-namespace
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+spec:
+  containers:
+    - name: test-connection
+      image: "{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}"
+      command: ['sh', '-c', "pg_isready -h {{ .Values.database.name }} -p {{ .Values.database.service.port }}"]
+  restartPolicy: Never
+
