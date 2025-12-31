@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-network-policy
+  namespace: backend-namespace
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+
+  policyTypes:
+    - Ingress
+    - Egress
+
+  ingress:
+    # Frontend → Backend
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: frontend-namespace
+      ports:
+        - protocol: TCP
+          port: {{ .Values.backend.service.port }}
+
+    # Ingress Controller → Backend
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: {{ .Values.backend.service.port }}
+
+  egress:
+    # Backend → Database
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: database-namespace
+      ports:
+        - protocol: TCP
+          port: 3306
+
+    # DNS 
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+

@@ -1,0 +1,126 @@
+# =====================
+# Backend configuration
+# =====================
+backend:
+  namespace: backend-namespace
+
+  replicaCount: 2
+
+  image:
+    repository: hagerramadan/ubuntu-entry-cmd-privat
+    tag: backend-v3
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 5000
+
+  # Backend DOES NOT expose ingress
+  ingress:
+    enabled: false
+
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60
+
+  secrets:
+    databasePassword: "supersecret"
+    databaseUser: "appuser"   
+    databaseName: "appdb"
+
+  config:
+    APP_ENV: production
+    DB_HOST: "mydb.database-namespace.svc.cluster.local"
+    DB_PORT: "3306"
+
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+
+  resourceQuota:
+    hard:
+      pods: "5"
+      requests.cpu: "2"
+      requests.memory: "2Gi"
+      limits.cpu: "4"
+      limits.memory: "4Gi"
+      services: "2"
+      persistentvolumeclaims: "2"
+
+# =====================
+# Frontend configuration
+# =====================
+frontend:
+  namespace: frontend-namespace
+
+  replicaCount: 2
+
+  image:
+    repository: hagerramadan/ubuntu-entry-cmd-privat
+    tag: frontend-v1
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: true
+    className: nginx
+    host: frontend.local
+    tls:
+      enabled: true
+      secretName: frontend-tls
+
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+
+  config:
+    APP_ENV: production
+    BACKEND_BASE_URL: http://backend.backend-namespace.svc.cluster.local:5000
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+  resourceQuota:
+    hard:
+      pods: "5"
+      requests.cpu: "1"
+      requests.memory: "1Gi"
+      limits.cpu: "2"
+      limits.memory: "2Gi"
+      services: "2"
+
+# =====================
+# Helm common settings
+# =====================
+imagePullSecrets:
+  - name: dockerhub-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+

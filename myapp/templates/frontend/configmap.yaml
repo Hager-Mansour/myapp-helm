@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: frontend-namespace
+data:
+  APP_ENV: {{ .Values.frontend.config.APP_ENV | quote }}
+  BACKEND_URL: "http://backend.backend-namespace.svc.cluster.local:5000"
+

@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-network-policy
+  namespace: frontend-namespace
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend
+
+  policyTypes:
+    - Ingress
+    - Egress
+
+  ingress:
+    # Ingress Controller → Frontend
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: {{ .Values.frontend.service.port }}
+
+  egress:
+    # Frontend → Backend فقط
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: backend-namespace
+      ports:
+        - protocol: TCP
+          port: 5000
+
+    # DNS
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+
