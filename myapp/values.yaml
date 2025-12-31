@@ -63,12 +63,13 @@ frontend:
 
   image:
     repository: hagerramadan/ubuntu-entry-cmd-privat
-    tag: frontend-v1
+    tag: frontend-v2
     pullPolicy: IfNotPresent
 
   service:
     type: ClusterIP
     port: 80
+    targetPort: 8080
 
   ingress:
     enabled: true
@@ -86,7 +87,7 @@ frontend:
 
   config:
     APP_ENV: production
-    BACKEND_BASE_URL: http://backend.backend-namespace.svc.cluster.local:5000
+    BACKEND_BASE_URL: http://backend.local
 
   resources:
     requests:
