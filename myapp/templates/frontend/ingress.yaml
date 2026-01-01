@@ -3,14 +3,14 @@ kind: Ingress
 metadata:
   name: frontend-ingress
   namespace: frontend-namespace
-  annotations:
-    # السطر ده هو اللي هيخلي /api/signup تتحول لـ /signup قبل ما تروح للباك إند
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    nginx.ingress.kubernetes.io/enable-cors: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ .Values.frontend.ingress.host }}
+      secretName: frontend-tls
   rules:
-    - host: frontend.local
+    - host: {{ .Values.frontend.ingress.host }}
       http:
         paths:
           - path: /
@@ -19,12 +19,11 @@ spec:
               service:
                 name: frontend
                 port:
-                  number: 80
-          # الجزء اللي بيربط الـ API بالباك إند
-          - path: /api/(.*)
-            pathType: ImplementationSpecific
+                  number: {{ .Values.frontend.service.port }}
+          - path: /api
+            pathType: Prefix
             backend:
               service:
-                name: backend-service-external # السيرفيس اللي إنتي لسه عاملاها
+                name: backend-service-external
                 port:
-                  number: 5000 # بورت الباك إند
+                  number: {{ .Values.backend.service.port }}
