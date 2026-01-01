@@ -3,6 +3,9 @@ kind: Ingress
 metadata:
   name: frontend-ingress
   namespace: frontend-namespace
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/enable-cors: "true"
 spec:
   ingressClassName: nginx
   tls:
@@ -20,8 +23,8 @@ spec:
                 name: frontend
                 port:
                   number: {{ .Values.frontend.service.port }}
-          - path: /api
-            pathType: Prefix
+          - path: /api/(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: backend-service-external
