@@ -10,6 +10,6 @@ spec:
   ports:
     - name: http
       port: {{ .Values.frontend.service.port }}
-      targetPort: {{ .Values.frontend.service.targetport }}
+      targetPort: {{ .Values.frontend.service.targetPort }}
 
 

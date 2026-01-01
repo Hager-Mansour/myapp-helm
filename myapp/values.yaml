@@ -16,8 +16,13 @@ backend:
     port: 5000
 
   # Backend DOES NOT expose ingress
-  ingress:
-    enabled: false
+  # ingress:
+  #   enabled: false
+  #   className: nginx
+  #   host: backend.local
+  #   tls:
+  #     enabled: false
+  #     secretName: backend-tls
 
   hpa:
     enabled: true
@@ -31,9 +36,11 @@ backend:
     databaseName: "appdb"
 
   config:
-    APP_ENV: production
-    DB_HOST: "mydb.database-namespace.svc.cluster.local"
-    DB_PORT: "3306"
+  DB_HOST: "mydb.database-namespace.svc.cluster.local"
+  DB_NAME: "appdb"  
+  DB_USER: "appuser"       
+  DB_PASSWORD: "supersecrect"
+  DB_PORT: "3306"
 
   resources:
     requests:
@@ -87,7 +94,7 @@ frontend:
 
   config:
     APP_ENV: production
-    BACKEND_BASE_URL: http://backend.local
+    BACKEND_BASE_URL: http://backend.backend-namespace.svc.cluster.local:5000
 
   resources:
     requests:
