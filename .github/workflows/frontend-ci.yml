@@ -1,6 +1,9 @@
 name: Frontend CI
 
-
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -12,7 +15,7 @@ jobs:
       - name: SonarCloud Scan
         uses: sonarsource/sonarqube-scan-action@master
         with:
-          projectBaseDir: app/frontend
+          projectBaseDir: app/Frontend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -26,6 +29,6 @@ jobs:
       - name: Build and Push Frontend
         uses: docker/build-push-action@v4
         with:
-          context: ./app/frontend
+          context: ./app/Frontend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend-app:latest
