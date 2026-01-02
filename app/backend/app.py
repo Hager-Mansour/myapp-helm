@@ -16,19 +16,22 @@ dbconfig = {
 }
 pool = pooling.MySQLConnectionPool(pool_name="mypool", pool_size=5, **dbconfig)
 
-# Create users table
-conn = pool.get_connection()
-cursor = conn.cursor()
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) UNIQUE,
-    password VARCHAR(255)
-)
-""")
-conn.commit()
-cursor.close()
-conn.close()
+# Initialize Database
+def init_db():
+    conn = pool.get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(255) UNIQUE,
+        password VARCHAR(255)
+    )
+    """)
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+init_db()
 
 @app.route("/signup", methods=["POST"])
 def signup():
@@ -69,17 +72,3 @@ def health():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-    cursor.close()
-    conn.close()
-    if user and check_password_hash(user[0], password):
-        return jsonify({"message":"Sign in successful"})
-    return jsonify({"message":"Invalid credentials"}), 401
-
-@app.route("/health")
-def health():
-    return "OK"
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
-
